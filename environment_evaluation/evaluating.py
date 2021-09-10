@@ -63,7 +63,7 @@ def test_on_env(max_steps, ctrl, df, x0, z0, iter, normalize):
         fig, axs = plt.subplots(nrows=2, ncols=2)
         axs[0, 0].step(local_t, U[:, 0], where='post', label='New Controller Real Input')
         axs[0, 0].plot(local_t, [U[:, 0][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
-        axs[0, 0].plot(local_t, df.U1 * 1000, label='MPC Output')
+        axs[0, 0].plot(local_t, df.U1 * 1000, label='MPC Input')
         axs[0, 0].plot(local_t, df.USS1 * 1000, linestyle="--", label='MPC Steady State Input')
         axs[0, 0].set_ylabel(u'U1 [\u03bcL/min]')
         axs[0, 0].set_xlabel('time [min]')
@@ -71,7 +71,7 @@ def test_on_env(max_steps, ctrl, df, x0, z0, iter, normalize):
 
         axs[0, 1].step(local_t, U[:, 1], where='post', label='New Controller Real Input')
         axs[0, 1].plot(local_t, [U[:, 1][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
-        axs[0, 1].plot(local_t, df.U2 * 1000, label='MPC Output')
+        axs[0, 1].plot(local_t, df.U2 * 1000, label='MPC Input')
         axs[0, 1].plot(local_t, df.USS2 * 1000, linestyle="--", label='MPC Steady State Input')
         axs[0, 1].set_ylabel(u'U2 [\u03bcL/min]')
         axs[0, 1].set_xlabel('time [min]')
@@ -79,7 +79,7 @@ def test_on_env(max_steps, ctrl, df, x0, z0, iter, normalize):
 
         axs[1, 0].step(local_t, U[:, 2], where='post', label='New Controller Real Input')
         axs[1, 0].plot(local_t, [U[:, 2][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
-        axs[1, 0].plot(local_t, df.U3 * 1000, label='MPC Output')
+        axs[1, 0].plot(local_t, df.U3 * 1000, label='MPC Input')
         axs[1, 0].plot(local_t, df.USS3 * 1000, linestyle="--", label='MPC Steady State Input')
         axs[1, 0].set_ylabel(u'U3 [\u03bcL/min]')
         axs[1, 0].set_xlabel('time [min]')
@@ -87,7 +87,7 @@ def test_on_env(max_steps, ctrl, df, x0, z0, iter, normalize):
 
         axs[1, 1].step(local_t, U[:, 3], where='post', label='New Controller Real Input')
         axs[1, 1].plot(local_t, [U[:, 3][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
-        axs[1, 1].plot(local_t, df.U4 * 1000, label='MPC Output')
+        axs[1, 1].plot(local_t, df.U4 * 1000, label='MPC Input')
         axs[1, 1].plot(local_t, df.USS4 * 1000, linestyle="--", label='MPC Steady State Input')
         axs[1, 1].set_ylabel(u'U4 [\u03bcL/min]')
         axs[1, 1].set_xlabel('time [min]')
