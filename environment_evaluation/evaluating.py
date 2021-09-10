@@ -116,9 +116,9 @@ if __name__ == '__main__':
         efactors, actions, rewards = test_on_env(max_steps, ctrl, df, x0s[iter], z0s[iter], iter, normalize)
         avg_efactors += efactors[-1]
         EMPC_avg_efactors += E[60*(iter+1)-1]
-    
-    avg_efactors = avg_efactors / num_iter
-    EMPC_avg_efactors = EMPC_avg_efactors / num_iter
+
+    avg_efactors /= num_iter
+    EMPC_avg_efactors /= num_iter
 
     results = {"avg_efactors":avg_efactors, "EMPC_avg_efactors": EMPC_avg_efactors[0]}
     with open('results/results.json', 'w') as f:

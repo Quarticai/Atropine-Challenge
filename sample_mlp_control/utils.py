@@ -86,10 +86,16 @@ class SeedData:
 
         if not self.resume_from:
             self.resume_check_passed = True
-        elif all([self.resume_from[condition] is None for condition in self.resume_from]):
+        elif all(
+            self.resume_from[condition] is None for condition in self.resume_from
+        ):
             self.resume_check_passed = True
         else:
-            self.resume_check_passed = all([self.resume_from[condition] == current_positions[condition] for condition in self.resume_from])
+            self.resume_check_passed = all(
+                self.resume_from[condition] == current_positions[condition]
+                for condition in self.resume_from
+            )
+
         return self.resume_check_passed
 
 
@@ -149,12 +155,11 @@ class DataObj:
         if self.reward_on_steady:
             ess = df[["ESS"]].fillna(0.).to_numpy()
             reward = -abs(efactor - ess)
+        elif self.reward_on_absolute_efactor:
+            reward = -abs(efactor)
         else:
-            if self.reward_on_absolute_efactor:
-                reward = -abs(efactor)
-            else:
-                previous_efactor = np.concatenate([efactor[0].reshape((1,1)), efactor[:-1]])
-                reward = previous_efactor - efactor
+            previous_efactor = np.concatenate([efactor[0].reshape((1,1)), efactor[:-1]])
+            reward = previous_efactor - efactor
         action_norm_penalty = np.linalg.norm(actions*self.reward_on_actions_penalty, ord=2, axis=1)
         action_norm_penalty = action_norm_penalty.reshape((action_norm_penalty.shape[0], 1))
         reward += action_norm_penalty
@@ -297,11 +302,8 @@ class MDPTorchDataset(Dataset):
 
 def average_result_csvs(csvs_loc, submission_file_name):
     file_list = mzutils.get_things_in_loc(csvs_loc)
-    csv_list = []
-    for file_path in file_list: #filter in all csvs
-        if file_path[-4:] == '.csv':
-            csv_list.append(file_path)
-    if len(csv_list) < 1:
+    csv_list = [file_path for file_path in file_list if file_path[-4:] == '.csv']
+    if not csv_list:
         raise Exception(csvs_loc, "contains no csv file.")
     result_df = pd.read_csv(csv_list[0])
     action_value_to_sums = [] # mean? vote for majority?
@@ -318,10 +320,7 @@ def d4rl_dataset_to_dt_format(d4rl_dataset, name='data/custom'):
     N = d4rl_dataset['rewards'].shape[0]
     data_ = collections.defaultdict(list)
 
-    use_timeouts = False
-    if 'timeouts' in d4rl_dataset:
-        use_timeouts = True
-
+    use_timeouts = 'timeouts' in d4rl_dataset
     episode_step = 0
     paths = []
     for i in range(N):
@@ -334,9 +333,7 @@ def d4rl_dataset_to_dt_format(d4rl_dataset, name='data/custom'):
             data_[k].append(d4rl_dataset[k][i])
         if done_bool or final_timestep:
             episode_step = 0
-            episode_data = {}
-            for k in data_:
-                episode_data[k] = np.array(data_[k])
+            episode_data = {k: np.array(data_[k]) for k in data_}
             paths.append(episode_data) #append for each episode
             data_ = collections.defaultdict(list)
         episode_step += 1
