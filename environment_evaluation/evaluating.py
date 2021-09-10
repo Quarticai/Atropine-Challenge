@@ -48,60 +48,54 @@ def test_on_env(max_steps, ctrl, df, x0, z0, iter, normalize):
         local_t = [k * 10 for k in range(step)]
         plt.close("all")
         plt.figure(0)
-        plt.plot(local_t, env.Y, label='New Controller Real Output')
+        plt.plot(local_t, env.Y, label='New Controller Output')
         plt.plot(local_t, [env.Y[-1] for k in range(step)], linestyle="--", label='New Controller Steady State Output')
         plt.plot(local_t, df.E, label='MPC Output')
         plt.plot(local_t, df.ESS, linestyle="--", label='MPC Steady State Output')
         plt.xlabel('Time [min]')
-        plt.ylabel('E-Factor [A.U.]')
-        plt.legend()
-        plt.grid()
+        plt.ylabel('E-Factor [kg/kg]')
+        plt.legend(loc="lower left", ncol=2, bbox_to_anchor=(-0.15, 1.02, 1, 0.2), borderaxespad=1)
+        plt.subplots_adjust(top=0.75)
         plt.savefig(f"results/efactor_fig_{iter}")
-        plt.tight_layout()
+        plt.close("all")
 
-        # create figure (fig), and array of axes (ax)
         fig, axs = plt.subplots(nrows=2, ncols=2)
-        axs[0, 0].step(local_t, U[:, 0], where='post', label='New Controller Real Input')
+        
+        axs[0, 0].step(local_t, U[:, 0], where='post', label='New Controller Input')
         axs[0, 0].plot(local_t, [U[:, 0][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
         axs[0, 0].plot(local_t, df.U1 * 1000, label='MPC Input')
         axs[0, 0].plot(local_t, df.USS1 * 1000, linestyle="--", label='MPC Steady State Input')
-        axs[0, 0].set_ylabel(u'U1 [\u03bcL/min]')
-        axs[0, 0].set_xlabel('time [min]')
-        axs[0, 0].grid()
+        axs[0, 0].set_ylabel(u'$U_1$ [\u03bcL/min]')
 
-        axs[0, 1].step(local_t, U[:, 1], where='post', label='New Controller Real Input')
+        axs[0, 1].step(local_t, U[:, 1], where='post', label='New Controller Input')
         axs[0, 1].plot(local_t, [U[:, 1][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
         axs[0, 1].plot(local_t, df.U2 * 1000, label='MPC Input')
         axs[0, 1].plot(local_t, df.USS2 * 1000, linestyle="--", label='MPC Steady State Input')
-        axs[0, 1].set_ylabel(u'U2 [\u03bcL/min]')
-        axs[0, 1].set_xlabel('time [min]')
-        axs[0, 1].grid()
+        axs[0, 1].set_ylabel(u'$U_2$ [\u03bcL/min]')
 
-        axs[1, 0].step(local_t, U[:, 2], where='post', label='New Controller Real Input')
+        axs[1, 0].step(local_t, U[:, 2], where='post', label='New Controller Input')
         axs[1, 0].plot(local_t, [U[:, 2][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
         axs[1, 0].plot(local_t, df.U3 * 1000, label='MPC Input')
         axs[1, 0].plot(local_t, df.USS3 * 1000, linestyle="--", label='MPC Steady State Input')
-        axs[1, 0].set_ylabel(u'U3 [\u03bcL/min]')
-        axs[1, 0].set_xlabel('time [min]')
-        axs[1, 0].grid()
+        axs[1, 0].set_ylabel(u'$U_3$ [\u03bcL/min]')
+        axs[1, 0].set_xlabel('Time [min]')
 
-        axs[1, 1].step(local_t, U[:, 3], where='post', label='New Controller Real Input')
+        axs[1, 1].step(local_t, U[:, 3], where='post', label='New Controller Input')
         axs[1, 1].plot(local_t, [U[:, 3][-1] for k in range(step)], linestyle="--", label='New Controller Steady State Input')
         axs[1, 1].plot(local_t, df.U4 * 1000, label='MPC Input')
         axs[1, 1].plot(local_t, df.USS4 * 1000, linestyle="--", label='MPC Steady State Input')
-        axs[1, 1].set_ylabel(u'U4 [\u03bcL/min]')
-        axs[1, 1].set_xlabel('time [min]')
-        axs[1, 1].legend()
+        axs[1, 1].set_ylabel(u'$U_4$ [\u03bcL/min]')
+        axs[1, 1].set_xlabel('Time [min]')
         plt.tight_layout()
-        plt.grid()
+        axs[0, 0].legend(loc="lower left", ncol=2, bbox_to_anchor=(-0.45, 1.02, 3, 2), borderaxespad=1, mode='expand')
+        plt.subplots_adjust(top=0.75)
+
         plt.savefig(f"results/input_fig_{iter}")
         plt.close()
     except Exception:
         print(f"iteration {iter} is not finished, with {step} steps.")
-    # plt.show()
 
     return efactors, actions, rewards 
-    # df[["Unnamed: 0","USS1","USS2","USS3","USS4","ESS","E","KF_X1","KF_X2","Z1","Z2","Z3","Z4","Z5","Z6","Z7","Z8","Z9","Z10","Z11","Z12","Z13","Z14","Z15","Z16","Z17","Z18","Z19","Z20","Z21","Z22","Z23","Z24","Z25","Z26","Z27","Z28","Z29","Z30"]].fillna(0.).to_numpy()
 
 
 if __name__ == '__main__':
@@ -113,17 +107,20 @@ if __name__ == '__main__':
     ctrl = controller()
     normalize = ctrl.normalize
     avg_efactors = 0.0
+    EMPC_avg_efactors = 0.0
+    df = pd.read_csv("atropine_test_100.csv")
+    E = df[["E"]].fillna(0.).to_numpy()
 
     for iter in tqdm(range(num_iter)):
         df = pd.read_csv(f"evaluating_dat/{iter}.csv")
         efactors, actions, rewards = test_on_env(max_steps, ctrl, df, x0s[iter], z0s[iter], iter, normalize)
-        avg_efactors += np.mean(efactors)
+        avg_efactors += efactors[-1]
+        EMPC_avg_efactors += E[60*(iter+1)-1]
     
     avg_efactors = avg_efactors / num_iter
+    EMPC_avg_efactors = EMPC_avg_efactors / num_iter
 
-    df = pd.read_csv("atropine_test_100.csv")
-    EMPC_avg_efactors = np.mean(df[["E"]].fillna(0.).to_numpy())
-    results = {"avg_efactors":avg_efactors, "EMPC_avg_efactors": EMPC_avg_efactors}
+    results = {"avg_efactors":avg_efactors, "EMPC_avg_efactors": EMPC_avg_efactors[0]}
     with open('results/results.json', 'w') as f:
         json.dump(results, f)
     shutil.make_archive("results", 'zip', 'results/')

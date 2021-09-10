@@ -21,7 +21,8 @@ Run [evaluating.py](./environment_evaluation/evaluating.py) at the file director
 Also, it will contain 200 images; for k in range(100), efactor_fig_{k}.png contains the change of efactor through time using your controller (New Controller Real Output), the change of efactor with MPC through time (MPC Output), and the steady state efactors for them (Steady State Output); input_fig_{k}.png contains the change of 4 inputs through time using your controller (New Controller Real Input), using MPC (MPC Input), and the steady state inputs for them (Steady State Input).
 
 ### Offline Dataset
-sample_mlp_control/public_dat contains 1000 episodes of training data collected by a baseline [MPC controller](https://en.wikipedia.org/wiki/Model_predictive_control). Since the training should follow the "offline" setting, the MLP model is not allowed to interact with the original environment, and can only learn from these 1000 collected episodes during the training.
+
+For the data collection part, we let a baseline [MPC controller](https://en.wikipedia.org/wiki/Model_predictive_control) interact with the environment with random initialization 1000 times, for 600 minutes per time. We here by batchify the data collection process in order to control the convergence time and form into a fair comparison with the offline reinforcement learning algorithms. Also since the training should follow the "offline" setting, the MLP model is not allowed to interact with the original environment. You can find these 1000 episodes of training data at [sample_mlp_control/public_dat](./sample_mlp_control/public_dat).
 
 # Our Blog post
 
