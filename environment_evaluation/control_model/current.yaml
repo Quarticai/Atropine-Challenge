@@ -1,0 +1,49 @@
+default_loc: 'd3rlpy_logs/'
+dataset_folder: '../public_dat'
+N_EPOCHS: 600
+DYNAMICS_N_EPOCHS: 500
+num_of_seeds: 2
+eval_size: 0.1
+normalize: False
+include_t: True
+uss_subtracted: True
+reward_on_ess_subtracted: True
+reward_on_steady: False
+reward_on_absolute_efactor: False # whether reward base on absolute Efactor. (is a valid input only if reward_on_steady is False)
+reward_on_actions_penalty: 0.0
+reward_on_reject_actions: False
+relaxed_max_min_actions: True
+#online
+online_training: False
+buffer_maxlen: 1000000
+explorer_start_epsilon: 1.0
+explorer_end_epsilon: 0.1
+explorer_duration: 20000
+online_n_epochs: 80
+n_steps_per_epoch: 1000
+update_interval: 100
+online_save_interval: 100
+#torchlighting
+io_type: 1 # 1: input just observations, 2: input (r, a, s)
+save_top_k: 5
+log_dir: 'torchl_logs'
+weight_decay: 0.1
+#RNNlike
+rnn_normalize: True
+rnn_model_name: 'LSTM'
+rnn_bias: True
+dropout: 0.01
+rnn_hidden_size: 128
+hidden2outdepth: 3
+rnn_n_epochs: 2000
+rnn_num_layers: 2
+bidirectional: False
+rnn_clamping: True
+#MLP
+mlp_normalize: True
+mlp_model_name: 'MLP'
+mlp_num_layers: 4
+mlp_hidden_size: 128
+mlp_n_epochs: 5000
+mlp_bias: True
+mlp_clamping: True

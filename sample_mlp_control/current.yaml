@@ -1,0 +1,28 @@
+default_loc: 'logs/'
+dataset_folder: '../public_dat'
+N_EPOCHS: 600
+DYNAMICS_N_EPOCHS: 500
+num_of_seeds: 2
+eval_size: 0.1
+normalize: False
+include_t: True
+uss_subtracted: True
+reward_on_ess_subtracted: True
+reward_on_steady: False
+reward_on_absolute_efactor: False # whether reward base on absolute Efactor. (is a valid input only if reward_on_steady is False)
+reward_on_actions_penalty: 0.0
+reward_on_reject_actions: False
+relaxed_max_min_actions: False
+#torchlighting
+io_type: 1 # 1: input just observations, 2: input (r, a, s)
+save_top_k: 5
+log_dir: 'torchl_logs'
+weight_decay: 0.1
+#MLP
+mlp_normalize: True
+mlp_model_name: 'MLP'
+mlp_num_layers: 4
+mlp_hidden_size: 128
+mlp_n_epochs: 5000
+mlp_bias: True
+mlp_clamping: True
