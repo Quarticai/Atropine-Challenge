@@ -178,9 +178,7 @@ class LLSeparator:
         Qtot = u[0]  # total volumetric flowrate
         c_in = u[1:15]  # inlet concentration of the components from reactor 3
 
-        # Eq. (10)
-        xdot = (Qtot / self.volume) * (c_in - x)  # [mol/L]
-        return xdot
+        return (Qtot / self.volume) * (c_in - x)
 
     @staticmethod
     def get_algebraic(x, z, u, d):
@@ -486,9 +484,7 @@ class Plant:
         u_llseparator = u[3:]
         xdot_llseparator = self.llseparator.get_derivative(x_llseparator, z_llseparator, u_llseparator, 0)
 
-        xdot = vertcat(xdot_reactor1, xdot_reactor2, xdot_reactor3, xdot_llseparator)
-
-        return xdot
+        return vertcat(xdot_reactor1, xdot_reactor2, xdot_reactor3, xdot_llseparator)
 
     def get_algebraic(self, x, z, u):
         ND1 = self.reactor1.num_discretization_points
@@ -498,5 +494,6 @@ class Plant:
         x_llseparator = x[NUM_COMPONENTS * (ND1 + ND2 + ND3):]
         z_llseparator = z[:]
         u_llseparator = u[3:]
-        res_llseparator = self.llseparator.get_algebraic(x_llseparator, z_llseparator, u_llseparator, 0)
-        return res_llseparator
+        return self.llseparator.get_algebraic(
+            x_llseparator, z_llseparator, u_llseparator, 0
+        )
