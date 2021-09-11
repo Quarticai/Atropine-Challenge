@@ -24,10 +24,9 @@ class MLP(pl.LightningModule):
         self.weight_decay = weight_decay
         self.clamping = clamping
         self.io_type = io_type
-        hidden2output = []
-        hidden2output.append(torch.nn.Linear(input_size, hidden_size, bias=bias))
+        hidden2output = [torch.nn.Linear(input_size, hidden_size, bias=bias)]
         hidden2output.append(torch.nn.RReLU())
-        for i in range(self.num_layers-1):
+        for _ in range(self.num_layers-1):
             hidden2output.append(torch.nn.Linear(hidden_size, hidden_size, bias=bias))
             hidden2output.append(torch.nn.RReLU())
         hidden2output.append(torch.nn.Linear(hidden_size, output_size, bias=bias))
@@ -61,22 +60,20 @@ class MLP(pl.LightningModule):
         rewards = batch['rewards'] # (bs, L)
         input = self.build_input(observations, actions, rewards)
         output = self.forward(input) # (bs, L, output_size)
-        loss = torch.nn.functional.mse_loss(output, actions)
-        return loss
+        return torch.nn.functional.mse_loss(output, actions)
 
     def training_step(self, batch, batch_idx):
         loss = self.forward_batch_loss(batch)
-        self.log(f'training_loss', loss)
+        self.log('training_loss', loss)
         return loss
         
     def validation_step(self, batch, batch_idx):
         loss = self.forward_batch_loss(batch)
-        self.log(f'val_loss', loss)
+        self.log('val_loss', loss)
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), weight_decay=self.weight_decay)
-        return optimizer
+        return torch.optim.AdamW(self.parameters(), weight_decay=self.weight_decay)
 
 
 class controller:
@@ -97,5 +94,4 @@ class controller:
         """
         with torch.no_grad():
             state = torch.from_numpy(state.reshape(1,1,state.shape[0])).to(torch.float32)
-            inp = self.current_algo.forward(state)[0][0].numpy()
-            return inp
+            return self.current_algo.forward(state)[0][0].numpy()
